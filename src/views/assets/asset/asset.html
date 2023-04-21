@@ -1,0 +1,601 @@
+<v-container fluid class="message mt-5">
+   <Loader :loading="isLoading"></Loader>
+    <v-card elevation="0" class="rounded-lg" :key="componentKey" >
+        <v-card-title>
+            Assets
+            <v-spacer></v-spacer>
+            <v-dialog v-model="dialog" persistent max-width="900px"  transition="scale-transition">
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn color="primary" v-bind="attrs" v-on="on" elevation="0" class="btn  rounded-lg">
+                        <v-icon>mdi-plus</v-icon>
+                        Add Asset
+                    </v-btn>
+                </template>
+                <!-- color="rgba(255, 255, 255, 0.9)" -->
+                <v-card class="rounded-lg" >
+                    <v-card-title class="primary white--text my-5">
+                        <span class="text-h5">Add Asset</span>
+                        <v-spacer></v-spacer>
+                        <v-icon color="white" @click="dialog = false">mdi-close</v-icon>
+                    </v-card-title>
+                    <v-card-text>
+                        <form @submit.prevent="addAsset">
+                            <v-row>
+                               
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-select label="--Select Category--" class="rounded-lg"   outlined dense  v-model="asset.category" :items="categoryOptions">
+                                        
+                                    </v-select>
+                                </v-col>
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-select label="--Select Condition--"  class="rounded-lg" outlined dense  v-model="asset.status" :items="statusOptions">
+
+                                    </v-select>
+                                </v-col>
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-text-field type="text" label="Name" class="rounded-lg" outlined dense required v-model="asset.name" ></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-text-field type="number" label="Purchasing Price" class="rounded-lg" outlined dense required v-model="asset.p_price" ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-text-field type="year" label="Manufactured Year" class="rounded-lg" outlined dense required v-model="asset.manufactured_year" ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-text-field type="number" label="Useful Life" class="rounded-lg" outlined dense required v-model="asset.uta" ></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="12" sm="4" md="6">
+                                    <v-text-field type="date" label="Purchase Date" class="rounded-lg" outlined dense required v-model="asset.purchase_date" ></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row id="furniture" v-if=" asset.category === 'FURNITURE'">
+                                <v-col cols="12" sm="12" md="12">
+                                    <v-select label="--Furniture Type--" class="rounded-lg" outlined dense v-model="asset.furniture_type" :items="furnitureOptions">
+
+                                    </v-select>
+                                </v-col>
+                            </v-row>
+                            <v-row  v-if=" asset.category === 'ELECTRONIC'">
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-text-field type="text" label="Brand" class="rounded-lg" outlined dense required v-model="asset.chapa" ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-text-field type="text" label="Model" class="rounded-lg" outlined dense required v-model="asset.modeli" ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-text-field type="text" label="Serial No." class="rounded-lg" outlined dense required v-model="asset.serial_no" ></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row v-if=" asset.category === 'BUILDING'">
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-text-field type="number" label="Size in sqmeters" class="rounded-lg" outlined dense required v-model="asset.size" ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-text-field type="number" label="Floors" class="rounded-lg" outlined dense required v-model="asset.floor_no" ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-text-field type="number" label="Rooms" class="rounded-lg" outlined dense required v-model="asset.no_of_rooms" ></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row v-if=" asset.category === 'BUILDING'">
+                                <v-col cols="12" sm="12" md="12">
+                                    <v-text-field type="text" label="Purpose..." class="rounded-lg" outlined dense required v-model="asset.purpose" ></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row v-if=" asset.category === 'TRANSPORT'"> 
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-select label="--Transport Type--"  class="rounded-lg" outlined dense  v-model="asset.transport_type" :items="transportOptions">
+
+                                    </v-select>
+                                </v-col>
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-text-field type="text" label="Cheses No." class="rounded-lg" outlined dense required v-model="asset.cheses_no" ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-text-field type="text" label="Reg No." class="rounded-lg" outlined dense required v-model="asset.reg_no" ></v-text-field>
+                                </v-col>
+                            </v-row>
+                             <v-row v-if=" asset.category === 'TRANSPORT'">
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-text-field type="text" label="Engine Capacity" class="rounded-lg" outlined dense required v-model="asset.engine_capacity" ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-text-field type="text" label="Brand" class="rounded-lg" outlined dense required v-model="asset.brand" ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="4" md="4" >
+                                    <v-text-field type="text" label="Model" class="rounded-lg" outlined dense required v-model="asset.model" ></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="primary" elevation="0"  class="btn white--text rounded-lg" type="submit" >
+                                    Submit
+                                </v-btn>
+                            </v-card-actions>
+                        </form>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+            <v-dialog v-model="dialogAsset" persistent max-width="600px">
+
+                <v-card class="rounded-lg">
+                    <v-card-title class="primary white--text my-5">
+                        <span class="text-h5">Edit Section</span>
+                        <v-spacer></v-spacer>
+                        <v-icon color="white" @click="dialogAsset = false">mdi-close</v-icon>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-form>
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-text-field type="text" name="name" v-model="assetEdit.name"></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+
+                                <v-btn color="blue darken-1" text type="submit" rounded @click="updateAsset">
+                                    Submit
+                                </v-btn>
+                            </v-card-actions>
+                        </v-form>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+        </v-card-title>
+    </v-card>
+  
+    <template>
+        <v-card  class="my-2 rounded-lg" elevation="0">
+          <v-tabs
+            v-model="tab"
+            background-color="transparent"
+            color="cyan darken-3"
+            grow
+          >
+            <v-tab
+              v-for="(tab,i) in tabs"
+              :key="i"
+            >
+              {{ tab }}
+            </v-tab>
+          </v-tabs>
+      
+          <v-tabs-items v-model="tab">
+            <v-tab-item
+              v-for="(tab,i) in tabs"
+              :key="i"
+            >
+              <v-card
+                color="basil"
+                flat
+              >
+                <v-card-text>
+                   <template v-if="tab === 'All'">
+                    <v-data-table :headers="headers" :items="assets" :search="search" class="my-data-table" :bordered="true">
+                        <template v-slot:[`item.availability`]="{ item }">
+                            <div v-if="item.flug==1">
+                                <v-chip  small  class="warning">
+                                    Pending
+                                </v-chip>
+                            </div>
+                            <div v-else-if="item.flug==2">
+                                <v-chip  small  class=" success">
+                                    Approved
+                                </v-chip>
+                            </div>
+                            <div v-else-if="item.flug==3">
+                                <v-chip  small  class="red darken-1 white--text">
+                                    Assigned
+                                </v-chip>
+                            </div>
+                            <div v-else>
+                                <v-chip  small  class="primary">
+                                    Available
+                                </v-chip>
+                            </div>
+                        </template>
+                        <template v-slot:[`item.usage`]="{ item }">
+                            <div v-if="item.user_id==null">
+                                <v-chip color="green darken-3" small  class="white--text">
+                                    InStore
+                                </v-chip>
+                            </div>
+                            <div v-else>
+                                <v-chip color="yellow darken-4" small  class="white--text">
+                                    InUse
+                                </v-chip>
+                            </div>
+                        </template>
+                        <template v-slot:[`item.actions`]="{ item }">
+                            
+                            <div class="" v-if="item.status=='BROKEN'">
+                                TO BE REPAIRED
+                            </div>
+                            <div class="" v-else>
+            
+                                <div class="" v-if="item.flug==0" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon></router-link>
+                                    <v-icon medium @click="orderDialog(item)" color="primary" title="Request" >
+                                        mdi-arrow-top-right-thick
+                                    </v-icon>
+                                    <v-icon medium @click="deleteDialog(item)" color="primary" title="Delete" >
+                                        mdi-delete-circle
+                                    </v-icon>
+                                </div>
+                                <div class="" v-if="item.flug==1" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon>
+                                </router-link>
+                                </div>
+                                <div class="" v-if="item.flug==2" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon></router-link>
+                                   
+                                    <router-link :to="{ name: 'asset-assign', params: { id: item.id } }" style="text-decoration:none;"> <v-icon medium  color="primary" title="Assign" > mdi-check-circle</v-icon></router-link>
+                                </div>
+                                <div class="" v-if="item.flug==3" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon></router-link>
+                                    <router-link :to="{ name: 'asset-unassign', params: { id: item.id } }" style="text-decoration:none;"> <v-icon medium  color="primary" title="Unassign" > mdi-close-circle</v-icon></router-link>
+                                </div>
+                            </div>
+                           
+                        </template>
+                    </v-data-table>
+                   </template>
+                   <template v-if="tab === 'Electronics'">
+                    <v-data-table :headers="headers" :items="electronics" :search="search" class="my-data-table" :bordered="true">
+                        <template v-slot:[`item.availability`]="{ item }">
+                            <div v-if="item.flug==1">
+                                <v-chip  small  class="warning">
+                                    Pending
+                                </v-chip>
+                            </div>
+                            <div v-else-if="item.flug==2">
+                                <v-chip  small  class=" success">
+                                    Approved
+                                </v-chip>
+                            </div>
+                            <div v-else-if="item.flug==3">
+                                <v-chip  small  class="red darken-1 white--text">
+                                    Assigned
+                                </v-chip>
+                            </div>
+                            <div v-else>
+                                <v-chip  small  class="primary">
+                                    Available
+                                </v-chip>
+                            </div>
+                        </template>
+                        <template v-slot:[`item.usage`]="{ item }">
+                            <div v-if="item.user_id==null">
+                                <v-chip color="green darken-3" small  class="white--text">
+                                    InStore
+                                </v-chip>
+                            </div>
+                            <div v-else>
+                                <v-chip color="yellow darken-4" small  class="white--text">
+                                    InUse
+                                </v-chip>
+                            </div>
+                        </template>
+                        <template v-slot:[`item.actions`]="{ item }">
+                            
+                            <div class="" v-if="item.status=='BROKEN'">
+                                TO BE REPAIRED
+                            </div>
+                            <div class="" v-else>
+            
+                                <div class="" v-if="item.flug==0" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon></router-link>
+                                    <v-icon medium @click="orderDialog(item)" color="primary" title="Request" >
+                                        mdi-arrow-top-right-thick
+                                    </v-icon>
+                                    <v-icon medium @click="deleteDialog(item)" color="primary" title="Delete" >
+                                        mdi-delete-circle
+                                    </v-icon>
+                                </div>
+                                <div class="" v-if="item.flug==1" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon>
+                                </router-link>
+                                </div>
+                                <div class="" v-if="item.flug==2" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon></router-link>
+                                   
+                                    <router-link :to="{ name: 'asset-assign', params: { id: item.id } }" style="text-decoration:none;"> <v-icon medium  color="primary" title="Assign" > mdi-check-circle</v-icon></router-link>
+                                </div>
+                                <div class="" v-if="item.flug==3" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon></router-link>
+                                    <router-link :to="{ name: 'asset-unassign', params: { id: item.id } }" style="text-decoration:none;"> <v-icon medium  color="primary" title="Unassign" > mdi-close-circle</v-icon></router-link>
+                                </div>
+                            </div>
+                           
+                        </template>
+                    </v-data-table>
+                   </template>
+                   <template v-if="tab === 'Furniture'">
+                    <v-data-table :headers="headers" :items="furniture" :search="search" class="my-data-table" :bordered="true">
+                        <template v-slot:[`item.availability`]="{ item }">
+                            <div v-if="item.flug==1">
+                                <v-chip  small  class="warning">
+                                    Pending
+                                </v-chip>
+                            </div>
+                            <div v-else-if="item.flug==2">
+                                <v-chip  small  class=" success">
+                                    Approved
+                                </v-chip>
+                            </div>
+                            <div v-else-if="item.flug==3">
+                                <v-chip  small  class="red darken-1 white--text">
+                                    Assigned
+                                </v-chip>
+                            </div>
+                            <div v-else>
+                                <v-chip  small  class="primary">
+                                    Available
+                                </v-chip>
+                            </div>
+                        </template>
+                        <template v-slot:[`item.usage`]="{ item }">
+                            <div v-if="item.user_id==null">
+                                <v-chip color="green darken-3" small  class="white--text">
+                                    InStore
+                                </v-chip>
+                            </div>
+                            <div v-else>
+                                <v-chip color="yellow darken-4" small  class="white--text">
+                                    InUse
+                                </v-chip>
+                            </div>
+                        </template>
+                        <template v-slot:[`item.actions`]="{ item }">
+                            
+                            <div class="" v-if="item.status=='BROKEN'">
+                                TO BE REPAIRED
+                            </div>
+                            <div class="" v-else>
+            
+                                <div class="" v-if="item.flug==0" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon></router-link>
+                                    <v-icon medium @click="orderDialog(item)" color="primary" title="Request" >
+                                        mdi-arrow-top-right-thick
+                                    </v-icon>
+                                    <v-icon medium @click="deleteDialog(item)" color="primary" title="Delete" >
+                                        mdi-delete-circle
+                                    </v-icon>
+                                </div>
+                                <div class="" v-if="item.flug==1" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon>
+                                </router-link>
+                                </div>
+                                <div class="" v-if="item.flug==2" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon></router-link>
+                                   
+                                    <router-link :to="{ name: 'asset-assign', params: { id: item.id } }" style="text-decoration:none;"> <v-icon medium  color="primary" title="Assign" > mdi-check-circle</v-icon></router-link>
+                                </div>
+                                <div class="" v-if="item.flug==3" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon></router-link>
+                                    <router-link :to="{ name: 'asset-unassign', params: { id: item.id } }" style="text-decoration:none;"> <v-icon medium  color="primary" title="Unassign" > mdi-close-circle</v-icon></router-link>
+                                </div>
+                            </div>
+                           
+                        </template>
+                    </v-data-table>
+                   </template>
+                   <template v-if="tab === 'Buildings'">
+                    <v-data-table :headers="headers" :items="buildings" :search="search" class="my-data-table" :bordered="true">
+                        <template v-slot:[`item.availability`]="{ item }">
+                            <div v-if="item.flug==1">
+                                <v-chip  small  class="warning">
+                                    Pending
+                                </v-chip>
+                            </div>
+                            <div v-else-if="item.flug==2">
+                                <v-chip  small  class=" success">
+                                    Approved
+                                </v-chip>
+                            </div>
+                            <div v-else-if="item.flug==3">
+                                <v-chip  small  class="red darken-1 white--text">
+                                    Assigned
+                                </v-chip>
+                            </div>
+                            <div v-else>
+                                <v-chip  small  class="primary">
+                                    Available
+                                </v-chip>
+                            </div>
+                        </template>
+                        <template v-slot:[`item.usage`]="{ item }">
+                            <div v-if="item.user_id==null">
+                                <v-chip color="green darken-3" small  class="white--text">
+                                    InStore
+                                </v-chip>
+                            </div>
+                            <div v-else>
+                                <v-chip color="yellow darken-4" small  class="white--text">
+                                    InUse
+                                </v-chip>
+                            </div>
+                        </template>
+                        <template v-slot:[`item.actions`]="{ item }">
+                            
+                            <div class="" v-if="item.status=='BROKEN'">
+                                TO BE REPAIRED
+                            </div>
+                            <div class="" v-else>
+            
+                                <div class="" v-if="item.flug==0" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon></router-link>
+                                    <v-icon medium @click="orderDialog(item)" color="primary" title="Request" >
+                                        mdi-arrow-top-right-thick
+                                    </v-icon>
+                                    <v-icon medium @click="deleteDialog(item)" color="primary" title="Delete" >
+                                        mdi-delete-circle
+                                    </v-icon>
+                                </div>
+                                <div class="" v-if="item.flug==1" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon>
+                                </router-link>
+                                </div>
+                                <div class="" v-if="item.flug==2" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon></router-link>
+                                   
+                                    <router-link :to="{ name: 'asset-assign', params: { id: item.id } }" style="text-decoration:none;"> <v-icon medium  color="primary" title="Assign" > mdi-check-circle</v-icon></router-link>
+                                </div>
+                                <div class="" v-if="item.flug==3" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon></router-link>
+                                    <router-link :to="{ name: 'asset-unassign', params: { id: item.id } }" style="text-decoration:none;"> <v-icon medium  color="primary" title="Unassign" > mdi-close-circle</v-icon></router-link>
+                                </div>
+                            </div>
+                           
+                        </template>
+                    </v-data-table>
+                   </template>
+                   <template v-if="tab === 'Vehicles'">
+                    <v-data-table :headers="headers" :items="vehicles" :search="search" class="my-data-table" :bordered="true">
+                        <template v-slot:[`item.availability`]="{ item }">
+                            <div v-if="item.flug==1">
+                                <v-chip  small  class="warning">
+                                    Pending
+                                </v-chip>
+                            </div>
+                            <div v-else-if="item.flug==2">
+                                <v-chip  small  class=" success">
+                                    Approved
+                                </v-chip>
+                            </div>
+                            <div v-else-if="item.flug==3">
+                                <v-chip  small  class="red darken-1 white--text">
+                                    Assigned
+                                </v-chip>
+                            </div>
+                            <div v-else>
+                                <v-chip  small  class="primary">
+                                    Available
+                                </v-chip>
+                            </div>
+                        </template>
+                        <template v-slot:[`item.usage`]="{ item }">
+                            <div v-if="item.user_id==null">
+                                <v-chip color="green darken-3" small  class="white--text">
+                                    InStore
+                                </v-chip>
+                            </div>
+                            <div v-else>
+                                <v-chip color="yellow darken-4" small  class="white--text">
+                                    InUse
+                                </v-chip>
+                            </div>
+                        </template>
+                        <template v-slot:[`item.actions`]="{ item }">
+                            
+                            <div class="" v-if="item.status=='BROKEN'">
+                                TO BE REPAIRED
+                            </div>
+                            <div class="" v-else>
+            
+                                <div class="" v-if="item.flug==0" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon></router-link>
+                                    <v-icon medium @click="orderDialog(item)" color="primary" title="Request" >
+                                        mdi-arrow-top-right-thick
+                                    </v-icon>
+                                    <v-icon medium @click="deleteDialog(item)" color="primary" title="Delete" >
+                                        mdi-delete-circle
+                                    </v-icon>
+                                </div>
+                                <div class="" v-if="item.flug==1" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon>
+                                </router-link>
+                                </div>
+                                <div class="" v-if="item.flug==2" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon></router-link>
+                                   
+                                    <router-link :to="{ name: 'asset-assign', params: { id: item.id } }" style="text-decoration:none;"> <v-icon medium  color="primary" title="Assign" > mdi-check-circle</v-icon></router-link>
+                                </div>
+                                <div class="" v-if="item.flug==3" >
+                                    <router-link :to="{ name: 'asset-view', params: { id: item.id } }" style="text-decoration:none;"><v-icon medium title="View" color="primary">
+                                        mdi-eye-circle
+                                    </v-icon></router-link>
+                                    <router-link :to="{ name: 'asset-unassign', params: { id: item.id } }" style="text-decoration:none;"> <v-icon medium  color="primary" title="Unassign" > mdi-close-circle</v-icon></router-link>
+                                </div>
+                            </div>
+                           
+                        </template>
+                    </v-data-table>
+                   </template>
+                </v-card-text>
+              </v-card>
+              
+            </v-tab-item>
+          </v-tabs-items>
+        </v-card>
+      </template>
+     
+    <v-dialog v-model="dialogDelete" max-width="500px">
+        <v-card class="rounded-lg">
+            <v-card-title class="text-h5 primary my-3 white--text">Delete Section</v-card-title>
+            <v-card-text class="text-h5">Are you sure you want to delete this item?</v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click=" dialogDelete=false">Cancel</v-btn>
+                <v-btn color="blue darken-1" text @click="deleteAsset()">OK</v-btn>
+                <v-spacer></v-spacer>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="confirmDialogVisible" max-width="500px">
+        <v-card class="rounded-lg" :elevation="24">
+            <!-- <v-card-title class=" primary my-4 ">Delete Section</v-card-title> -->
+            <v-card-text class="text-h5 text--bold">Are you sure you want to Order this Asset?</v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="confirmDialogVisible = false">Cancel</v-btn>
+                <v-btn color="blue darken-1" text @click="placeorder" >OK</v-btn>
+                <v-spacer></v-spacer>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+</v-container>

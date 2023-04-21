@@ -1,0 +1,151 @@
+<v-card elevation="0" class="rounded-lg">
+    <v-card-title>
+        Assets
+        <v-spacer></v-spacer>
+        <v-dialog v-model="dialog" persistent max-width="900px">
+            <template v-slot:activator="{ on, attrs }">
+                <v-btn color="primary" v-bind="attrs" v-on="on" elevation="0" class="btn  rounded-lg">
+                    <v-icon>mdi-plus</v-icon>
+                    Add Asset
+                </v-btn>
+            </template>
+            <v-card class="rounded-lg">
+                <v-card-title class="primary white--text my-5">
+                    <span class="text-h5">Add Asset</span>
+                    <v-spacer></v-spacer>
+                    <v-icon color="white" @click="dialog = false">mdi-close</v-icon>
+                </v-card-title>
+                <v-card-text>
+                    <v-form @click.prevent="addAsset">
+                        <v-row>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-select label="--Asset Name--" item-text="name" class="rounded-lg" outlined dense item-value="id" name="name_id" v-model="asset.name_id" :items="name">
+
+                                </v-select>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-select label="--Select Category--" class="rounded-lg" item-text="name" item-value="id" outlined dense name="category" v-model="selectedCategory" :items="assetCat">
+                                          <option v-for="option in assetCat" :key="option.value">{{ option.name }}</option>
+
+                         <!-- <option v-for="status in items" :key="status">{{ JSON.stringify(status)}}</option> -->
+                                </v-select>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-select label="--Select Condition--" item-text="name" class="rounded-lg" outlined dense item-value="id" v-model="asset.name_id">
+
+                                </v-select>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-text-field type="text" label="Purchasing Price" class="rounded-lg" outlined dense required v-model="asset.p_price" autocomplete="off"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-text-field type="year" label="Manufactured Year" class="rounded-lg" outlined dense required v-model="asset.manufactured_year" autocomplete="off"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-text-field type="text" label="Useful Life" class="rounded-lg" outlined dense required v-model="asset.uta" autocomplete="off"></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col cols="12" sm="6" md="6">
+                                <v-text-field type="date" label="Purchase Date" class="rounded-lg" outlined dense required v-model="asset.purchase_date" autocomplete="off"></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-row id="furniture">
+                            <v-col cols="12" sm="12" md="12">
+                                <v-select label="--Furniture Type--" class="rounded-lg" outlined dense v-model="asset.furniture_type">
+
+                                </v-select>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-text-field type="text" label="Brand" class="rounded-lg" outlined dense required v-model="asset.chapa" autocomplete="off"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-text-field type="text" label="Model" class="rounded-lg" outlined dense required v-model="asset.modeli" autocomplete="off"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-text-field type="text" label="Serial No." class="rounded-lg" outlined dense required v-model="serial_no" autocomplete="off"></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-text-field type="number" label="Size in sqmeters" class="rounded-lg" outlined dense required v-model="asset.size" autocomplete="off"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-text-field type="number" label="Floors" class="rounded-lg" outlined dense required v-model="asset.floors" autocomplete="off"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-text-field type="number" label="Rooms" class="rounded-lg" outlined dense required v-model="rooms" autocomplete="off"></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-select label="--Transport Type--" item-text="name" class="rounded-lg" outlined dense item-value="id" v-model="asset.name_id">
+
+                                </v-select>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-text-field type="text" label="Cheses No." class="rounded-lg" outlined dense required v-model="asset.floors" autocomplete="off"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-text-field type="text" label="Engine Capacity" class="rounded-lg" outlined dense required v-model="rooms" autocomplete="off"></v-text-field>
+                            </v-col>
+                        </v-row>
+                         <v-row>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-select label="--Reg No--" item-text="name" class="rounded-lg" outlined dense item-value="id" v-model="asset.reg_no">
+
+                                </v-select>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-text-field type="text" label="Brand" class="rounded-lg" outlined dense required v-model="brand" autocomplete="off"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="4">
+                                <v-text-field type="text" label="Model" class="rounded-lg" outlined dense required v-model="model" autocomplete="off"></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <!-- <v-btn color="blue darken-1" rounded text >
+                                Close
+                            </v-btn> -->
+                            <v-btn color="blue darken-1" elevation="0" type="submit" class="btn white--text rounded-lg" @click="addAsset">
+                                <v-icon>mdi-submit</v-icon>
+                                Submit
+                            </v-btn>
+                        </v-card-actions>
+                    </v-form>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+        <v-dialog v-model="dialogAsset" persistent max-width="600px">
+
+            <v-card class="rounded-lg">
+                <v-card-title class="primary white--text my-5">
+                    <span class="text-h5">Edit Section</span>
+                    <v-spacer></v-spacer>
+                    <v-icon color="white" @click="dialogAsset = false">mdi-close</v-icon>
+                </v-card-title>
+                <v-card-text>
+                    <v-form>
+                        <v-row>
+                            <v-col cols="12">
+                                <v-text-field type="text" name="name" v-model="assetEdit.name"></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+
+                            <v-btn color="blue darken-1" text type="submit" rounded @click="updateAsset">
+                                Submit
+                            </v-btn>
+                        </v-card-actions>
+                    </v-form>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+    </v-card-title>
+</v-card>
